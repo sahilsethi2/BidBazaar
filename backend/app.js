@@ -13,15 +13,19 @@ import superAdminRouter from "./router/superAdminRoutes.js"
 import { endedAuctionCron } from "./automation/endedAuctionCron.js";
 import { verifyCommissionCron } from "./automation/verifyCommissionCron.js"
 const app = express();
+import dotenv from "dotenv";
+dotenv.config();
+
 config({
     path: "./config/config.env"
 })
 
 
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
+    // Allow production origins, and include common local dev ports (Vite default 5173 and CRA 3000)
+    origin: process.env.NODE_ENV === 'production'
         ? ["https://bidbazzar.vercel.app", "https://auction-platform-1asl.onrender.com"]
-        : "http://localhost:3000",
+        : ["http://localhost:5173", "http://localhost:3000"],
     methods: ['POST', "GET", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -56,5 +60,4 @@ verifyCommissionCron()
 
 connection();
 app.use(errorMiddleware)
-
 export default app
